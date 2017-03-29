@@ -1,0 +1,62 @@
+
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport"
+       content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+ <meta http-equiv="X-UA-Compatible" content="ie=edge">
+ <title>JSON Examples</title>
+</head>
+<body>
+<h1>
+    JSON Example
+</h1>
+<div class="headContainer">
+
+<ul id="giphyLst"></ul>
+
+</div>
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script>
+   /*
+   Make sure you put the api key at the end of the url the below code will send you to a generic page.
+   The return will be a JSON object.
+   var api = "https://api.giphy.com/v1/gifs/search?";
+   var apikey = "&api_key=dc6zaTOxFJmzC";
+   var query = "&q=cat";
+   */
+   //You can retrieve the public key from the giphy site (https://api.giphy.com/)
+   var api = "https://api.giphy.com/v1/gifs/search?";
+   var query = "q=boats";
+   var apiKey = "&api_key=dc6zaTOxFJmzC";
+    var imgPath = "";
+
+
+
+    $(function () {
+        var url = api + query + apiKey;
+
+        //Below is a shorthand AJAX function
+        $.getJSON(url, function (json) {
+            var imgList = "";
+            $.each(json.data, function () {
+                for(var i = 0; i < json.data.length; i++ ){
+                    //json.data[i].images.original.url
+                    imgList += '<li><img src= "' + json.data[i].images.original.url + '"></li>';
+                }
+
+            });
+            $('#giphyLst').append(imgList);
+
+        });
+
+    });
+
+   var a = $("<button>");
+
+</script>
+</body>
+</html>
+
+
