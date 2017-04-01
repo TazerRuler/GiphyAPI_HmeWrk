@@ -1,0 +1,11 @@
+#giphyLst li {
+    margin: 10px;
+    display:inline;
+}
+
+button,
+div,
+form,
+input {
+    margin: 10px;
+}

@@ -1,60 +1,136 @@
-
 <html lang="en">
 <head>
- <meta charset="UTF-8">
- <meta name="viewport"
-       content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
- <meta http-equiv="X-UA-Compatible" content="ie=edge">
- <title>JSON Examples</title>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>JSON - Giphy Examples</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <!-- Theme CSS -->
+    <link href="css/stylesheet.css" rel="stylesheet">
 </head>
 <body>
-<h1>
-    JSON Example
+<h1 class="jumbotron">
+    Art's Favorite Giphy's
 </h1>
-<div class="headContainer">
 
-<ul id="giphyLst"></ul>
+<div>
 
+    <!-- Rendered buttons will get dumped Here  -->
+    <div id="giphyBtnsView"></div>
+    <form id="giphy-form">
+        <div>
+            <input id="searchTxt" type="text">
+            <button id="submitBTN" type="submit">Submit</button>
+        </div>
+    </form>
 </div>
+
+<div class='giphyContainer jumbotron'>
+    <div class="row">
+        <ul id="giphyLst"></ul>
+    </div>
+</div>
+
 <!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="js/jquery-3.1.1.js"></script>
 <script>
-   /*
-   Make sure you put the api key at the end of the url the below code will send you to a generic page.
-   The return will be a JSON object.
-   var api = "https://api.giphy.com/v1/gifs/search?";
-   var apikey = "&api_key=dc6zaTOxFJmzC";
-   var query = "&q=cat";
-   */
-   //You can retrieve the public key from the giphy site (https://api.giphy.com/)
-   var api = "https://api.giphy.com/v1/gifs/search?";
-   var query = "q=boats";
-   var apiKey = "&api_key=dc6zaTOxFJmzC";
-    var imgPath = "";
+
+    /*
+     Make sure you put the api key at the end of the url the below code will send you to a generic page.
+     The return will be a JSON object.
+     var api = "https://api.giphy.com/v1/gifs/search?";
+     var apikey = "&api_key=dc6zaTOxFJmzC";
+     var query = "&q=cat";
+     var limit = "&limit=10";  //We're limiting the number of giphy's that can be displayed
+     */
+    //You can retrieve the public key from the giphy site (https://api.giphy.com/)
+
+    // Initial array of giphy buttons
+    var giphyBtns = ["Cats", "Birds", "Squirrel", "Fish"];
+
+    $('#submitBTN').on('click', function (e) {
+        e.preventDefault();
+        var value = $('#searchTxt').val().trim();
+        if (value.length) {
+            //Adding Btn from text box to array.
+            giphyBtns.push(value);
+
+            var api = "https://api.giphy.com/v1/gifs/search?";
+            var query = "q=" + value;
+            var apiKey = "&api_key=dc6zaTOxFJmzC";
+            var limit = "&limit=10";
+            var url = api + query + apiKey + limit;
+            renderGiphyBtns();
+            renderGiphys(url);
+
+        } else
+            alert("Please enter a category of Giphy's that you would like to see! (Ex. cats, dogs, people) ");
+
+    });
+
+    function searchGiphyBtns() {
+        var value = $(this).attr("data-name");
+        var api = "https://api.giphy.com/v1/gifs/search?";
+        var query = "q=" + value;
+        var apiKey = "&api_key=dc6zaTOxFJmzC";
+        var limit = "&limit=10";
+        var url = api + query + apiKey + limit;
+        renderGiphys(url);
+    }
 
 
+    function renderGiphyBtns() {
+        $('#giphyBtnsView').empty();
 
-    $(function () {
-        var url = api + query + apiKey;
+        // Looping through the array of movies
+        for (var i = 0; i < giphyBtns.length; i++) {
+
+            // Then dynamicaly generating buttons for each movie in the array
+            // This code $("<button>") is all jQuery needs to create the beginning and end tag. (<button></button>)
+            var a = $("<button>");
+            // Adding a class of giphy to the button
+            a.addClass("giphy");
+            // Adding a data-attribute
+            a.attr("data-name", giphyBtns[i]);
+            // Providing the initial button text
+            a.text(giphyBtns[i]);
+            // Adding the button to the buttons-view div
+            $("#giphyBtnsView").append(a);
+        }
+    }
+
+
+    function renderGiphys(url) {
 
         //Below is a shorthand AJAX function
         $.getJSON(url, function (json) {
             var imgList = "";
-            $.each(json.data, function () {
-                for(var i = 0; i < json.data.length; i++ ){
-                    //json.data[i].images.original.url
-                    imgList += '<li><img src= "' + json.data[i].images.original.url + '"></li>';
-                }
+            $.each(json.data, function (i, item) {
+                //for (var i = 0; i < json.data.length; i++) {
+                //json.data[i].images.original.url
+                if (i > 10)return false;
+                imgList += '<li><img src= "' + json.data[i].images.original.url + '"></li>';
+                //}
 
             });
-            $('#giphyLst').append(imgList);
-
+            $('#giphyLst').prepend(imgList);
         });
+    }
+
+    $('#giphyLst').on('click', function () {
+        $(this).stop();
 
     });
 
-   var a = $("<button>");
 
+    // Adding a click event listener to all elements with a class of "giphy"
+    $(document).on("click", ".giphy", searchGiphyBtns);
+
+    // Calling the renderGiphyBtnsrenderGiphyBtns function to display the intial buttons
+    renderGiphyBtns();
 </script>
 </body>
 </html>
